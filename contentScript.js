@@ -211,7 +211,7 @@ function createYTSLink() {
 // Main execution
 function init() {
     const currentUrl = window.location.href;
-    if (currentUrl.includes('yts.mx')) {
+    if (currentUrl.includes('yts.mx/movies/')) {
         addLetterboxdButton();
     } else if (currentUrl.includes('letterboxd.com/film/')) {
         addYTSButton();
