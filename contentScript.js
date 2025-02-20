@@ -1,37 +1,34 @@
-function addButton() {
-    // Function to get movie title from the page
+// Utility functions
+function getUrlFriendlyTitle(title) {
+    return title.toLowerCase()
+               .replace(/[^a-z0-9]+/g, '-')
+               .replace(/^-+|-+$/g, '');
+}
+
+async function checkUrl(url) {
+    try {
+        const response = await chrome.runtime.sendMessage({
+            type: 'checkUrl',
+            url: url
+        });
+        return response.exists;
+    } catch (error) {
+        return false;
+    }
+}
+
+// Function to add Letterboxd button on YTS
+function addLetterboxdButton() {
     function getMovieTitle() {
         const titleElement = document.querySelector('h1[itemprop="name"]') || document.querySelector('h1');
         return titleElement ? titleElement.textContent.trim() : null;
     }
 
-    // Function to get movie release year
     function getReleaseYear() {
         const yearElement = document.querySelector('#movie-info h2');
         return yearElement ? yearElement.textContent.trim() : null;
     }
 
-    // Function to create URL-friendly title
-    function getUrlFriendlyTitle(title) {
-        return title.toLowerCase()
-                   .replace(/[^a-z0-9]+/g, '-')
-                   .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
-    }
-
-    // Function to check URL using background script
-    async function checkUrl(url) {
-        try {
-            const response = await chrome.runtime.sendMessage({
-                type: 'checkUrl',
-                url: url
-            });
-            return response.exists;
-        } catch (error) {
-            return false;
-        }
-    }
-
-    // Function to get working Letterboxd URL
     async function getLetterboxdUrl(title, year) {
         const urlFriendlyTitle = getUrlFriendlyTitle(title);
         
@@ -51,8 +48,119 @@ function addButton() {
         return `https://letterboxd.com/search/${encodeURIComponent(title)}/`;
     }
 
+    const link = createLetterboxdLink();
+    
+    // Handle click
+    link.onclick = async function(e) {
+        e.preventDefault();
+        const movieTitle = getMovieTitle();
+        const releaseYear = getReleaseYear();
+        if (movieTitle && releaseYear) {
+            const letterboxdUrl = await getLetterboxdUrl(movieTitle, releaseYear);
+            window.open(letterboxdUrl, '_blank');
+        }
+    };
+
+    // Add to YTS page
+    const targetParagraph = document.querySelector('p.hidden-md.hidden-lg');
+    if (targetParagraph) {
+        const subtitleButton = targetParagraph.querySelector('a[href*="yifysubtitles"]');
+        if (subtitleButton) {
+            subtitleButton.insertAdjacentElement('afterend', link);
+        } else {
+            targetParagraph.appendChild(link);
+        }
+    }
+}
+
+// Function to add YTS button on Letterboxd
+function addYTSButton() {
+    function getMovieInfo() {
+        const title = document.querySelector('.headline-1.filmtitle .name')?.textContent.trim();
+        const year = document.querySelector('.releaseyear a')?.textContent.trim();
+        console.log('Movie Info:', { title, year });
+        return { title, year };
+    }
+
+    async function getYTSUrl(title, year) {
+        const urlFriendlyTitle = title.toLowerCase()
+            .replace(/[^\w\s]/g, '')
+            .replace(/\s+/g, '-')
+            .trim();
+        
+        const directUrl = `https://yts.mx/movies/${urlFriendlyTitle}-${year}`;
+        
+        // Check if movie exists on YTS
+        const exists = await checkUrl(directUrl);
+        console.log('YTS URL exists:', exists, directUrl);
+        
+        return exists ? directUrl : null;
+    }
+
+    // Find the tab list
+    const tabList = document.querySelector('#tabbed-content header ul');
+    if (!tabList) {
+        console.log('Tab list not found');
+        return;
+    }
+
+    // Create new tab list item
+    const li = document.createElement('li');
     const link = document.createElement('a');
-    // Remove the text content as we'll add it after the icon
+    link.href = 'javascript:void(0);';
+    link.dataset.id = 'yts';
+    link.textContent = 'YTS';
+    li.appendChild(link);
+
+    // Initially disable the link
+    link.style.opacity = '0.5';
+    link.style.cursor = 'default';
+    link.title = 'Checking YTS availability...';
+
+    // Add click handler
+    link.addEventListener('click', async function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (link.dataset.available === 'true') {
+            const { title, year } = getMovieInfo();
+            if (title && year) {
+                const ytsUrl = await getYTSUrl(title, year);
+                if (ytsUrl) {
+                    window.open(ytsUrl, '_blank');
+                }
+            }
+        }
+    });
+
+    // Add to tab list
+    tabList.appendChild(li);
+
+    // Check availability and update link state
+    (async () => {
+        const { title, year } = getMovieInfo();
+        if (title && year) {
+            const ytsUrl = await getYTSUrl(title, year);
+            if (ytsUrl) {
+                // Movie exists on YTS
+                link.style.opacity = '1';
+                link.style.cursor = 'pointer';
+                link.title = 'Open in YTS';
+                link.dataset.available = 'true';
+            } else {
+                // Movie not available
+                link.textContent = 'Not on YTS';
+                link.title = 'Movie not available on YTS';
+                link.style.opacity = '0.5';
+                link.dataset.available = 'false';
+            }
+        }
+    })();
+}
+
+// Helper function to create Letterboxd link with icon
+function createLetterboxdLink() {
+    const link = document.createElement('a');
     link.rel = 'nofollow';
     link.target = '_blank';
     link.className = 'button';
@@ -61,7 +169,6 @@ function addButton() {
     link.style.marginLeft = '10px';
     link.title = 'Open in Letterboxd';
     
-    // Create icon span
     const iconSpan = document.createElement('span');
     const letterboxdIcon = `
         <svg width="16" height="16" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
@@ -82,40 +189,39 @@ function addButton() {
     iconSpan.style.marginRight = '5px';
     iconSpan.style.verticalAlign = 'middle';
     
-    // Add icon first
     link.appendChild(iconSpan);
+    link.appendChild(document.createTextNode('Open in Letterboxd'));
     
-    // Then add text
-    const textNode = document.createTextNode('Open in Letterboxd');
-    link.appendChild(textNode);
+    return link;
+}
 
-    // Handle click
-    link.onclick = async function(e) {
-        e.preventDefault();
-        const movieTitle = getMovieTitle();
-        const releaseYear = getReleaseYear();
-        if (movieTitle && releaseYear) {
-            const letterboxdUrl = await getLetterboxdUrl(movieTitle, releaseYear);
-            window.open(letterboxdUrl, '_blank');
-        }
-    };
+// Helper function to create YTS link with icon
+function createYTSLink() {
+    const link = document.createElement('a');
+    link.className = 'button';
+    link.style.marginLeft = '10px';
+    link.title = 'Search on YTS';
+    
+    // Add YTS icon/text here
+    link.textContent = 'Search on YTS';
+    
+    return link;
+}
 
-    // Find the correct target paragraph
-    const targetParagraph = document.querySelector('p.hidden-md.hidden-lg');
-    if (targetParagraph) {
-        const subtitleButton = targetParagraph.querySelector('a[href*="yifysubtitles"]');
-        if (subtitleButton) {
-            subtitleButton.insertAdjacentElement('afterend', link);
-        } else {
-            targetParagraph.appendChild(link);
-        }
+// Main execution
+function init() {
+    const currentUrl = window.location.href;
+    if (currentUrl.includes('yts.mx')) {
+        addLetterboxdButton();
+    } else if (currentUrl.includes('letterboxd.com/film/')) {
+        addYTSButton();
     }
 }
 
 // Run the script when the page is ready
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', addButton);
+    document.addEventListener('DOMContentLoaded', init);
 } else {
-    addButton();
+    init();
 }
   
