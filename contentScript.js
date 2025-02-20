@@ -61,16 +61,28 @@ function addLetterboxdButton() {
         }
     };
 
-    // Add to YTS page
-    const targetParagraph = document.querySelector('p.hidden-md.hidden-lg');
-    if (targetParagraph) {
-        const subtitleButton = targetParagraph.querySelector('a[href*="yifysubtitles"]');
-        if (subtitleButton) {
-            subtitleButton.insertAdjacentElement('afterend', link);
-        } else {
-            targetParagraph.appendChild(link);
-        }
+    // Find the movie info container
+    const movieInfo = document.querySelector('#movie-info');
+    if (!movieInfo) {
+        console.log('Movie info container not found');
+        return;
     }
+
+    // Find the subtitle button
+    const subtitleButton = movieInfo.querySelector('a[href*="subtitles"]');
+    if (subtitleButton) {
+        // Insert after the subtitle button
+        subtitleButton.insertAdjacentElement('afterend', link);
+        link.style.marginLeft = '10px';
+        return;
+    }
+
+    // Fallback: Add to movie-info if subtitle button not found
+    movieInfo.appendChild(link);
+    link.style.margin = '10px 0';
+    link.style.display = 'inline-flex';
+    link.style.alignItems = 'center';
+    link.style.justifyContent = 'center';
 }
 
 // Function to add YTS button on Letterboxd
@@ -163,16 +175,15 @@ function createLetterboxdLink() {
     const link = document.createElement('a');
     link.rel = 'nofollow';
     link.target = '_blank';
-    link.className = 'button';
-    link.style.width = '180px';
-    link.style.cursor = 'pointer';
-    link.style.marginLeft = '10px';
+    link.className = 'button';  // Using YTS's button class
+    link.href = 'javascript:void(0);';
     link.title = 'Open in Letterboxd';
     
+    // Create icon span
     const iconSpan = document.createElement('span');
     const letterboxdIcon = `
         <svg width="16" height="16" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
-            <g fill="#00A800">
+            <g fill="#6AC045">  <!-- Changed to YTS green color -->
                 <path d="M31.45 55.9h78.86v388.2H31.45z"/>
                 <path d="M210.9 55.9h78.86v388.2H210.9z"/>
                 <path d="M389.7 55.9h78.86v388.2H389.7z"/>
@@ -186,7 +197,7 @@ function createLetterboxdLink() {
     iconSpan.style.display = 'inline-block';
     iconSpan.style.width = '16px';
     iconSpan.style.height = '16px';
-    iconSpan.style.marginRight = '5px';
+    iconSpan.style.marginRight = '8px';
     iconSpan.style.verticalAlign = 'middle';
     
     link.appendChild(iconSpan);

@@ -1,10 +1,11 @@
 # YTS-Letterboxd Bridge
 
-A browser extension that enhances your movie browsing experience by adding a direct link to Letterboxd from YTS movie pages.
+A browser extension that enhances your movie browsing experience by adding a direct link to Letterboxd from YTS movie pages and vice versa.
 
 ## Features
 
 - Adds a "Open in Letterboxd" button to YTS movie pages
+- Adds a "YTS" button to Letterboxd movie pages
 - Smart URL handling:
 - Zero configuration needed
 
@@ -17,20 +18,18 @@ A browser extension that enhances your movie browsing experience by adding a dir
 
 ## Usage
 
-1. Visit any movie page on YTS (e.g., https://yts.mx/movies/...)
-2. Look for the green "Open in Letterboxd" button next to the subtitle download button
-3. Click to open the movie in Letterboxd in a new tab
+Visit any movie page on YTS (e.g., https://yts.mx/movies/...)
+1. Look for the green "Open in Letterboxd" button next to the subtitle download button
+2. Click to open the movie in Letterboxd in a new tab
+
+Also Visit any movie page on Letterboxd (e.g., https://letterboxd.com/film/...)
+1. Look for the green "YTS" next to Releases
+2. Click to open the movie in YTS in a new tab
 
 ## Screenshots
 
 [Add a screenshot showing the Letterboxd button on YTS page]
 
-## Technical Details
-
-- Uses Chrome's Manifest V3
-- Checks Letterboxd URL existence before redirecting
-- Handles special characters in movie titles
-- Maintains consistent styling with YTS
 
 ## Contributing
 
