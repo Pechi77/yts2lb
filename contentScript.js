@@ -26,7 +26,11 @@ function addLetterboxdButton() {
 
     function getReleaseYear() {
         const yearElement = document.querySelector('#movie-info h2');
-        return yearElement ? yearElement.textContent.trim() : null;
+        if (!yearElement) return null;
+        
+        // Extract just the year using regex
+        const yearMatch = yearElement.textContent.match(/\b(19|20)\d{2}\b/);
+        return yearMatch ? yearMatch[0] : null;
     }
 
     async function getLetterboxdUrl(title, year) {
