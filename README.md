@@ -28,8 +28,13 @@ Also Visit any movie page on Letterboxd (e.g., https://letterboxd.com/film/...)
 
 ## Screenshots
 
-[Add a screenshot showing the Letterboxd button on YTS page]
+### YTS Integration
+![Letterboxd button on YTS](./screenshots/yts-integration.png)
+*Letterboxd button seamlessly integrated into YTS movie page*
 
+### Letterboxd Integration
+![YTS button on Letterboxd](./screenshots/letterboxd-integration.png)
+*YTS button added to Letterboxd movie page*
 
 ## Contributing
 
