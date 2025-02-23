@@ -11,7 +11,7 @@ A browser extension that enhances your movie browsing experience by adding a dir
 
 ## Installation
 
-1. Clone this repository
+1. Clone this repository or Download and unzip the repository.
 2. Open Chrome and navigate to `chrome://extensions/`
 3. Enable "Developer mode" in the top right
 4. Click "Load unpacked" and select the extension directory
