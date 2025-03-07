@@ -37,11 +37,11 @@ Also Visit any movie page on Letterboxd (e.g., https://letterboxd.com/film/...)
 *YTS button added to Letterboxd movie page*
 
 
-### Search from Any Page
+### Select text and search from any page
 
 
 ![Search from Any Page](./screenshots/search-from-any-page.png)
-*Search from Any Page*
+
 
 
 
