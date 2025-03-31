@@ -1,12 +1,13 @@
 # YTS-Letterboxd Bridge
 
-A browser extension that enhances your movie browsing experience by adding a direct link to Letterboxd from YTS movie pages and vice versa.
+A browser extension that bridges YTS and Letterboxd, enabling quick movie searches and navigation between platforms. Features direct links between movie pages and context menu search functionality.
 
 ## Features
 
 - Adds a "Open in Letterboxd" button to YTS movie pages
 - Adds a "YTS" button to Letterboxd movie pages
-- Smart URL handling:
+- Smart URL handling
+- Select any movie title on any webpage to search directly in Letterboxd
 - Zero configuration needed
 
 ## Installation
@@ -36,15 +37,9 @@ Also Visit any movie page on Letterboxd (e.g., https://letterboxd.com/film/...)
 ![YTS button on Letterboxd](./screenshots/letterboxd-integration.png)
 *YTS button added to Letterboxd movie page*
 
-
 ### Select text and search from any page
 
-
 ![Search from Any Page](./screenshots/search-from-any-page.png)
-
-
-
-
 
 ## Contributing
 

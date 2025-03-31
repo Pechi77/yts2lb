@@ -1,8 +1,8 @@
 // Utility functions
 function getUrlFriendlyTitle(title) {
     return title.toLowerCase()
-               .replace(/[^a-z0-9]+/g, '-')
-               .replace(/^-+|-+$/g, '');
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
 }
 
 async function checkUrl(url) {
@@ -27,7 +27,7 @@ function addLetterboxdButton() {
     function getReleaseYear() {
         const yearElement = document.querySelector('#movie-info h2');
         if (!yearElement) return null;
-        
+
         // Extract just the year using regex
         const yearMatch = yearElement.textContent.match(/\b(19|20)\d{2}\b/);
         return yearMatch ? yearMatch[0] : null;
@@ -35,7 +35,7 @@ function addLetterboxdButton() {
 
     async function getLetterboxdUrl(title, year) {
         const urlFriendlyTitle = getUrlFriendlyTitle(title);
-        
+
         // Try URL with year first
         const urlWithYear = `https://letterboxd.com/film/${urlFriendlyTitle}-${year}/`;
         if (await checkUrl(urlWithYear)) {
@@ -53,9 +53,9 @@ function addLetterboxdButton() {
     }
 
     const link = createLetterboxdLink();
-    
+
     // Handle click
-    link.onclick = async function(e) {
+    link.onclick = async function (e) {
         e.preventDefault();
         const movieTitle = getMovieTitle();
         const releaseYear = getReleaseYear();
@@ -92,7 +92,7 @@ function addLetterboxdButton() {
 // Function to add YTS button on Letterboxd
 function addYTSButton() {
     function getMovieInfo() {
-        const title = document.querySelector('.headline-1.filmtitle .name')?.textContent.trim();
+        const title = document.querySelector('.headline-1 .name')?.textContent.trim();
         const year = document.querySelector('.releaseyear a')?.textContent.trim();
         console.log('Movie Info:', { title, year });
         return { title, year };
@@ -103,13 +103,15 @@ function addYTSButton() {
             .replace(/[^\w\s]/g, '')
             .replace(/\s+/g, '-')
             .trim();
-        
+
         const directUrl = `https://yts.mx/movies/${urlFriendlyTitle}-${year}`;
-        
+
+        console.log('Direct URL:', directUrl);
+
         // Check if movie exists on YTS
         const exists = await checkUrl(directUrl);
         console.log('YTS URL exists:', exists, directUrl);
-        
+
         return exists ? directUrl : null;
     }
 
@@ -134,10 +136,10 @@ function addYTSButton() {
     link.title = 'Checking YTS availability...';
 
     // Add click handler
-    link.addEventListener('click', async function(e) {
+    link.addEventListener('click', async function (e) {
         e.preventDefault();
         e.stopPropagation();
-        
+
         if (link.dataset.available === 'true') {
             const { title, year } = getMovieInfo();
             if (title && year) {
@@ -182,7 +184,7 @@ function createLetterboxdLink() {
     link.className = 'button';  // Using YTS's button class
     link.href = 'javascript:void(0);';
     link.title = 'Open in Letterboxd';
-    
+
     // Create icon span
     const iconSpan = document.createElement('span');
     const letterboxdIcon = `
@@ -203,10 +205,10 @@ function createLetterboxdLink() {
     iconSpan.style.height = '16px';
     iconSpan.style.marginRight = '8px';
     iconSpan.style.verticalAlign = 'middle';
-    
+
     link.appendChild(iconSpan);
     link.appendChild(document.createTextNode('Open in Letterboxd'));
-    
+
     return link;
 }
 
@@ -216,10 +218,10 @@ function createYTSLink() {
     link.className = 'button';
     link.style.marginLeft = '10px';
     link.title = 'Search on YTS';
-    
+
     // Add YTS icon/text here
     link.textContent = 'Search on YTS';
-    
+
     return link;
 }
 
@@ -239,4 +241,4 @@ if (document.readyState === 'loading') {
 } else {
     init();
 }
-  
+
